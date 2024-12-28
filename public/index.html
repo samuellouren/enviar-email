@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>enviando E-mail</title>
+</head>
+<body>
+    <h1>Envie sua mensagem</h1>
+    <form id="emailForm">
+        <label for="name">Nome:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="message">mensagem:</label>
+        <textarea name="message" id="message" required></textarea> <br><br>
+
+        <button type="submit">Enviar</button>
+    </form>
+    <p id="response"></p>
+
+
+    <script>
+        const form = document.getElementById('emailForm');
+        form.addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            const responseText = document.getElementById('response');
+
+            const formData = {
+                name: form.name.value,
+                email: form.email.value,
+                message: form.message.value,
+            }
+            try{
+                const response = await fetch('/send-email',{
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                if(response.ok) {
+                    responseText.textContent = result.message;
+                } else {
+                    responseText.textContent = result.error;
+                }
+            } catch (error) {
+                responseText.textContent = 'Erro ao enviar a mensagem.';
+            }
+        });
+    </script>
+</body>
+</html>
